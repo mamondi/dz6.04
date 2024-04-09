@@ -1,79 +1,78 @@
 ﻿using System;
 using System.Linq;
 
-namespace StudentQueries
+namespace CompanyQueries
 {
-    class Student
+    class Company
     {
         public string Name { get; set; }
-        public string Surname { get; set; }
-        public int Age { get; set; }
-        public string Institution { get; set; }
+        public DateTime FoundationDate { get; set; }
+        public string BusinessProfile { get; set; }
+        public string DirectorFullName { get; set; }
+        public int NumberOfEmployees { get; set; }
+        public string Address { get; set; }
     }
 
     class Program
     {
         static void Main(string[] args)
         {
-            Student[] students = {
-                new Student { Name = "John", Surname = "Doe", Age = 21, Institution = "MIT" },
-                new Student { Name = "Boris", Surname = "Johnson", Age = 25, Institution = "Oxford" },
-                new Student { Name = "Alice", Surname = "Brown", Age = 19, Institution = "Harvard" },
-                new Student { Name = "Bob", Surname = "Brooks", Age = 22, Institution = "Oxford" },
-                new Student { Name = "Boris", Surname = "Kovalev", Age = 20, Institution = "MIT" }
+            Company[] companies = {
+                new Company { Name = "ABC Food Ltd.", FoundationDate = new DateTime(2010, 5, 15), BusinessProfile = "Food", DirectorFullName = "John White", NumberOfEmployees = 120, Address = "London" },
+                new Company { Name = "XYZ Marketing Agency", FoundationDate = new DateTime(2015, 8, 20), BusinessProfile = "Marketing", DirectorFullName = "Emily Johnson", NumberOfEmployees = 80, Address = "New York" },
+                new Company { Name = "Tech Innovations Inc.", FoundationDate = new DateTime(2008, 11, 10), BusinessProfile = "IT", DirectorFullName = "David Smith", NumberOfEmployees = 250, Address = "San Francisco" },
+                new Company { Name = "Green Energy Solutions", FoundationDate = new DateTime(2012, 3, 25), BusinessProfile = "Energy", DirectorFullName = "Sarah Brown", NumberOfEmployees = 180, Address = "London" }
             };
 
-            var allStudents = students.ToArray();
+            var allCompanies = companies.ToArray();
 
-            Console.WriteLine("All students:");
-            foreach (var student in allStudents)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
-            Console.WriteLine();
+            var foodCompanies = companies.WhereContains("Food", company => company.Name);
 
-            var borisStudents = students.Where(student => student.Name == "Boris").ToArray();
-            Console.WriteLine("Boris students:");
-            foreach (var student in borisStudents)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
+            var marketingCompanies = companies.WhereEquals("Marketing", company => company.BusinessProfile);
 
-            var broStudents = students.Where(student => student.Surname.StartsWith("Bro")).ToArray();
-            Console.WriteLine("Bro students:");
-            foreach (var student in broStudents)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
+            var marketingOrITCompanies = companies.WhereAny(new[] { "Marketing", "IT" }, company => company.BusinessProfile);
 
-            var over19Students = students.Where(student => student.Age > 19).ToArray();
-            Console.WriteLine("Over 19 students:");
-            foreach (var student in over19Students)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
+            var companiesWithMoreThan100Employees = companies.Where(company => company.NumberOfEmployees > 100);
 
-            var between20And23Students = students.Where(student => student.Age > 20 && student.Age < 23).ToArray();
-            Console.WriteLine("Between 20 and 23 students:");
-            foreach (var student in between20And23Students)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
+            var companiesWith100To300Employees = companies.Where(company => company.NumberOfEmployees >= 100 && company.NumberOfEmployees <= 300);
 
-            var mitStudents = students.Where(student => student.Institution == "MIT").ToArray();
-            Console.WriteLine("MIT students:");
-            foreach (var student in mitStudents)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
+            var londonCompanies = companies.WhereEquals("London", company => company.Address);
 
-            var oxfordOver18Students = students.Where(student => student.Institution == "Oxford" && student.Age > 18).OrderByDescending(student => student.Age).ToArray();
-            Console.WriteLine("Oxford over 18 students:");
-            foreach (var student in oxfordOver18Students)
-            {
-                Console.WriteLine($"{student.Name} {student.Surname}, {student.Age}, {student.Institution}");
-            }
+            var whiteDirectorCompanies = companies.WhereEndsWith("White", company => company.DirectorFullName.Split().Last());
 
+            var foundedMoreThanTwoYearsAgo = companies.Where(company => (DateTime.Now - company.FoundationDate).TotalDays > 730);
+
+            var founded123DaysAgo = companies.Where(company => (DateTime.Now - company.FoundationDate).TotalDays == 123);
+
+            var directorSmithAndCompanyNameContainsWhite = companies.WhereAll(new[] { "Smith", "White" }, company => company.DirectorFullName.Split().Last(), company => company.Name);
+        }
+    }
+
+    static class CompanyExtensions
+    {
+        public static IQueryable<Company> WhereContains(this IQueryable<Company> source, string value, Func<Company, string> selector)
+        {
+            return source.Where(company => selector(company).Contains(value));
+        }
+
+        public static IQueryable<Company> WhereEquals(this IQueryable<Company> source, string value, Func<Company, string> selector)
+        {
+            return source.Where(company => selector(company) == value);
+        }
+
+        public static IQueryable<Company> WhereAny(this IQueryable<Company> source, string[] values, Func<Company, string> selector)
+        {
+            return source.Where(company => values.Contains(selector(company)));
+        }
+
+        public static IQueryable<Company> WhereEndsWith(this IQueryable<Company> source, string value, Func<Company, string> selector)
+        {
+            return source.Where(company => selector(company).EndsWith(value));
+        }
+
+        public static IQueryable<Company> WhereAll(this IQueryable<Company> source, string[] values, Func<Company, string> selector1, Func<Company, string> selector2)
+        {
+            return source.Where(company => values.All(value => selector1(company) == value) && selector2(company).Contains(values.Last()));
         }
     }
 }
