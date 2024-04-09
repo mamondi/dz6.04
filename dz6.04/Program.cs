@@ -41,33 +41,35 @@ namespace dz6._04
         }
     }
 
-public static void Main(string[] args)
-{
-    Console.InputEncoding = System.Text.Encoding.UTF8;
-    Console.OutputEncoding = System.Text.Encoding.UTF8;
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.InputEncoding = System.Text.Encoding.UTF8;
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-    int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 16, 18, 21, 24, 28, 32 };
+            int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 16, 18, 21, 24, 28, 32 };
 
-    Console.WriteLine("Усі цілі:");
-    Console.WriteLine(string.Join(", ", GetAllIntegers(numbers)));
+            Console.WriteLine("Усі цілі:");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetAllIntegers(numbers)));
 
-    Console.WriteLine("\nПарні цілі:");
-    Console.WriteLine(string.Join(", ", GetEvenIntegers(numbers)));
+            Console.WriteLine("\nПарні цілі:");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetEvenIntegers(numbers)));
 
-    Console.WriteLine("\nНепарні цілі:");
-    Console.WriteLine(string.Join(", ", GetOddIntegers(numbers)));
+            Console.WriteLine("\nНепарні цілі:");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetOddIntegers(numbers)));
 
-    Console.WriteLine("\nБільше 10:");
-    Console.WriteLine(string.Join(", ", GetGreaterThan(numbers, 10)));
+            Console.WriteLine("\nБільше 10:");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetGreaterThan(numbers, 10)));
 
-    Console.WriteLine("\nЧисла в діапазоні від 5 до 20:");
-    Console.WriteLine(string.Join(", ", GetNumbersInRange(numbers, 5, 20)));
+            Console.WriteLine("\nЧисла в діапазоні від 5 до 20:");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetNumbersInRange(numbers, 5, 20)));
 
-    Console.WriteLine("\nКратні семи:");
-    Console.WriteLine(string.Join(", ", GetMultiplesOfSeven(numbers)));
+            Console.WriteLine("\nКратні семи:");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetMultiplesOfSeven(numbers)));
 
-    Console.WriteLine("\nКратні восьми (за спаданням):");
-    Console.WriteLine(string.Join(", ", GetMultiplesOfEight(numbers)));
-}
-
+            Console.WriteLine("\nКратні восьми (за спаданням):");
+            Console.WriteLine(string.Join(", ", ArrOperations.GetMultiplesOfEight(numbers)));
+        }
+    }
 }
